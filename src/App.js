@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import AsteroidCard from "./AsteroidCard";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [nearEarthObjects, setNearEarthObjects] = useState();
+    const [dateToday, setDateToday] = useState();
+    const [errorToday, setErrorToday] = useState(false);
+
+    const setCurrentDate = () => setDateToday(moment(new Date()).format("YYYY-MM-DD"));
+
+    const getAsteroids = async () => {
+        const response = await axios.get("https://api.nasa.gov/neo/rest/v1/feed", {
+            params: {
+                api_key: process.env.REACT_APP_NASA_API_KEY,
+                start_date: dateToday,
+            },
+        });
+        console.log("get asteroids", response.data.near_earth_objects);
+        setNearEarthObjects(response.data.near_earth_objects);
+    };
+
+    useEffect(() => {
+        setCurrentDate();
+        getAsteroids();
+    }, []);
+
+    return (
+        <div>
+            {nearEarthObjects
+                ? nearEarthObjects[dateToday].map((asteroid) => <AsteroidCard key={asteroid.id} {...asteroid} />)
+                : "Loading"}
+        </div>
+    );
+};
 
 export default App;
