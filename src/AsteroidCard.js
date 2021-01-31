@@ -1,7 +1,7 @@
 import React from "react";
 
 const AsteroidCard = (props) => {
-    console.log("props", props);
+    // console.log("props", props);
     const isPotentiallyHazardous = props.is_potentially_hazardous_asteroid;
     const cardColor = isPotentiallyHazardous ? "bg-danger" : "bg-light";
     const closeApproachData = {
